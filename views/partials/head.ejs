@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= title %></title>
+<meta name="description" content="Motivated by our devotion to God's love, we are committed to following in the footsteps of Jesus.">
+<meta property="og:title" content="<%= title %>">
+<meta property="og:site_name" content="Inspire Ministries">
+<meta property="og:image" content="/img/logo.png">
+<link rel="icon" href="/img/favicon.jpg" sizes="32x32">
+<link rel="apple-touch-icon" href="/img/icon-192.jpg">
+<link rel="stylesheet" href="/css/fonts.css">
+<link rel="stylesheet" href="/css/site.css?v=1">
+<% if (typeof extraCss !== 'undefined') { %><link rel="stylesheet" href="<%= extraCss %>"><% } %>
+</head>
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+<a class="skip-link" href="#content">Skip to content</a>

@@ -1,0 +1,73 @@
+<%- include('partials/header') %>
+
+<section class="tagline-band tagline-band-slim"><%- include('partials/tagline', { size: 'sm' }) %></section>
+
+<section class="event">
+  <h1>2026 Texas Bible School Event</h1>
+  <div class="event-buttons">
+    <a class="btn btn-dark" href="#schedule">View Schedule</a>
+    <a class="btn btn-outline" href="#admin">Administration Team</a>
+  </div>
+
+  <div class="prose">
+    <h4>Event Information</h4>
+    <p>The Youth for Texas <strong>10-Day Bible School</strong> is scheduled for<br><strong>Tuesday, March 17 – Friday, March 27, 2026</strong>.<br>The location for 2026 will be <strong>Beloved and Beyond Camp</strong>.</p>
+    <p><strong>Sign-in</strong> will be on<br><strong>Tuesday, March 17 at 5:00 PM</strong> at Beloved and Beyond Camp.</p>
+    <h4>Fees</h4>
+    <p>The fee for the 2026 10-Day Bible School is:</p>
+    <ul>
+      <li><strong>$150 due at signup</strong></li>
+      <li><strong>$275 due on the day of sign-in</strong></li>
+    </ul>
+    <p><strong>February 28</strong> is the <strong>sign-up deadline</strong>.</p>
+    <p>Please send payment to <strong>P.O. Box 1568, Hillsboro, TX 76645, </strong>in care of <strong>Joel Byers</strong>.<br>For student signup questions, please contact Joel Byers @ <a href="sms:+12542669920"><u>+1(254) 266-9920</u></a></p>
+    <h4>Classes</h4>
+    <p>There will be <strong>four required classes</strong>, including choir.<br><strong>Students are expected to participate in all classes.</strong></p>
+    <p><strong>Class 1:</strong> Technology – <em>Harry Argo</em><br><strong>Class 2:</strong> Choir – <em>Adolf Unger</em></p>
+    <p><strong>Class 3:</strong> The Character of Christ – <em>Asher Whitmer</em></p>
+    <p><strong>Class 4:</strong> Seven Principles of Christian Living – <em>Johnny Bergen</em></p>
+    <ol>
+      <li>Fellowship with God</li>
+      <li>Parental Relationships</li>
+      <li>Personal Self-Image</li>
+      <li>Building Intentional Relationships</li>
+      <li>Meaningful Church Life</li>
+      <li>Fulfilling Courtship</li>
+      <li>Understanding the Christian’s Future</li>
+    </ol>
+  </div>
+</section>
+
+<section class="event-section" id="schedule">
+  <div class="divider-bar"><span>Proposed Schedule</span></div>
+  <div class="prose prose-schedule">
+    <h4>Morning Schedule</h4>
+    <p><strong>7:15 – 8:15</strong> Breakfast<br><strong>8:30 – 8:50</strong> Singing / Devotions</p>
+    <p><strong>9:00 – 10:00 </strong>Class 1: <strong>Technology</strong> – <em>Harry Argo</em><br><strong>10:00 – 10:15</strong> Class 1 <strong>Q&amp;A / Open Discussion</strong></p>
+    <p><strong>10:30 – 11:30 Choir </strong>– <em>Adolf Unger</em><br><strong>11:30 – 11:45</strong> Choir <strong>Q&amp;A / Discussion</strong></p>
+    <p><strong>12:00 – 1:00</strong> Lunch</p>
+    <h4>Afternoon Schedule</h4>
+    <p><strong>1:00 – 1:30</strong> Prayer Time</p>
+    <p><strong>1:30 – 2:30 </strong>Class 3: <strong>The Character of Christ</strong> – <em>Asher Whitmer</em><br><strong>2:30 – 2:45</strong> Class 3 <strong>Q&amp;A / Open Discussion</strong></p>
+    <p><strong>3:15 – 4:15 </strong>Class 4: <strong>Seven Principles of Christian Living</strong> – <em>Johnny Bergen</em><br><strong>4:15 – 4:30</strong> Class 4 <strong>Q&amp;A / Open Discussion</strong></p>
+    <p><strong>5:00 – 5:45</strong> Supper</p>
+    <h4>Evening Schedule</h4>
+    <p><strong>6:00 – 6:30</strong> Chapel<br><strong>6:30 – 8:30</strong> Scheduled Activities<br><strong>10:00</strong> Dorm Time</p>
+  </div>
+</section>
+
+<section class="event-section" id="admin">
+  <div class="divider-bar"><span>Administration</span></div>
+  <div class="team">
+    <% [['Joel Byers','Chairman/Administrator'],['Mervin Hochstedler','Vice Chairman'],['Johnny Bergen','Secretary'],['Ivan Ulrich','Treasurer'],['John Miller','Youth Pastor']].forEach(function (p) { %>
+    <div class="team-card">
+      <svg viewBox="0 0 448 512" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"/></svg>
+      <div><h3><%= p[0] %></h3><p><%= p[1] %></p></div>
+    </div>
+    <% }) %>
+  </div>
+</section>
+
+<%- include('partials/quote', { variant: 'center', image: '/img/bible-cross.jpg', text: 'Romans 15:13 "May the God of hope fill you with all joy and peace in believing so that by the power of the Holy Spirit you may abound in hope".' }) %>
+
+<%- include('partials/footer') %>

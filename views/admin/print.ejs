@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<title>Application <%= app.code %> — <%= app.first_name %> <%= app.last_name %></title>
+<link rel="stylesheet" href="/css/fonts.css">
+<link rel="stylesheet" href="/css/site.css?v=1">
+<link rel="stylesheet" href="/css/app.css?v=1">
+<link rel="stylesheet" href="/css/admin.css?v=1">
+</head>
+<body class="print-page">
+  <div class="print-bar"><button class="btn" onclick="window.print()">Print / Save as PDF</button> <a href="/admin/applications/<%= app.id %>">← Back</a></div>
+  <% const docs = [{ title: KIND_LABELS.student, schema, data: app.data, meta: 'Submitted ' + (fmt(app.submitted_at, true) || 'not yet') }]
+       .concat(refs.filter(function (r) { return r.ref && r.ref.status === 'completed'; }).map(function (r) {
+         return { title: r.label, schema: r.schema, data: r.ref.data, meta: 'Completed ' + fmt(r.ref.completed_at, true) + (r.ref.name ? ' by ' + r.ref.name : '') };
+       })); %>
+  <% docs.forEach(function (d, i) { %>
+    <article class="print-doc">
+      <header class="print-head">
+        <img src="/img/logo.png" alt="" width="90" height="89">
+        <div>
+          <p class="print-org">Inspire Ministries Texas · Refresh. Inspire. Strengthen. Equip.</p>
+          <h1><%= d.title %></h1>
+          <p class="muted">Applicant: <strong><%= app.first_name %> <%= app.last_name %></strong> · Student ID <%= app.code %> · <%= d.meta %></p>
+        </div>
+      </header>
+      <%- include('_answers', { schema: d.schema, data: d.data }) %>
+    </article>
+  <% }) %>
+</body>
+</html>

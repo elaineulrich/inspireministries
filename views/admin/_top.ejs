@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title><%= title %> · Inspire Ministries Admin</title>
+<link rel="icon" href="/img/favicon.jpg">
+<link rel="stylesheet" href="/css/fonts.css">
+<link rel="stylesheet" href="/css/site.css?v=1">
+<link rel="stylesheet" href="/css/app.css?v=1">
+<link rel="stylesheet" href="/css/admin.css?v=1">
+</head>
+<body class="admin">
+<% const navItem = (href, label) => {
+  const on = href === '/admin' ? (path === '/admin' || path === '/admin/' || path.startsWith('/admin/applications')) : (path === href || path.startsWith(href + '/'));
+  return `<a href="${href}" class="${on ? 'active' : ''}">${label}</a>`;
+}; %>
+<header class="admin-bar">
+  <a class="admin-brand" href="/admin"><img src="/img/logo-header.jpg" alt="" width="44" height="42"><span>Inspire Ministries <small>Admin</small></span></a>
+  <nav class="admin-nav" aria-label="Admin">
+    <%- navItem('/admin', 'Applications') %>
+    <%- navItem('/admin/forms', 'Forms') %>
+    <%- navItem('/admin/settings', 'Settings') %>
+    <%- navItem('/admin/users', 'Admin Users') %>
+    <%- navItem('/admin/emails', 'Email Log') %>
+  </nav>
+  <div class="admin-user">
+    <a href="/" target="_blank" rel="noopener">View site ↗</a>
+    <form method="post" action="/admin/logout"><button type="submit" class="link-btn"><%= admin.name %> · Sign out</button></form>
+  </div>
+</header>
+<main class="admin-main">

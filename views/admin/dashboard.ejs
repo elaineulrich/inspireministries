@@ -1,0 +1,54 @@
+<%- include('_top') %>
+<div class="page-head">
+  <h1>Applications</h1>
+  <div class="actions">
+    <a class="btn btn-ghost" href="/admin/export.csv<%= status ? '?status=' + status : '' %>">Export CSV</a>
+  </div>
+</div>
+<% if (flash === 'deleted') { %><p class="callout callout-ok">Application deleted.</p><% } %>
+
+<div class="stat-row">
+  <a class="stat <%= !status ? 'on' : '' %>" href="/admin"><strong><%= total %></strong><span>All</span></a>
+  <% Object.keys(STATUSES).forEach(function (k) { %>
+    <a class="stat <%= status === k ? 'on' : '' %>" href="/admin?status=<%= k %>"><strong><%= counts[k] || 0 %></strong><span><%= STATUSES[k] %></span></a>
+  <% }) %>
+</div>
+
+<form class="filters" method="get" action="/admin">
+  <input type="search" name="q" value="<%= q %>" placeholder="Search name, email or Student ID" aria-label="Search">
+  <select name="status" aria-label="Status">
+    <option value="">All statuses</option>
+    <% Object.keys(STATUSES).forEach(function (k) { %><option value="<%= k %>" <%= status === k ? 'selected' : '' %>><%= STATUSES[k] %></option><% }) %>
+  </select>
+  <select name="sort" aria-label="Sort">
+    <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Recently updated</option>
+    <option value="submitted" <%= sort === 'submitted' ? 'selected' : '' %>>Recently submitted</option>
+    <option value="oldest" <%= sort === 'oldest' ? 'selected' : '' %>>Oldest first</option>
+    <option value="name" <%= sort === 'name' ? 'selected' : '' %>>Last name</option>
+  </select>
+  <button class="btn" type="submit">Filter</button>
+</form>
+
+<% if (!rows.length) { %>
+  <div class="card empty">No applications<%= q || status ? ' match these filters' : ' yet' %>.</div>
+<% } else { %>
+<div class="table-wrap">
+<table class="table">
+  <thead><tr><th>Student</th><th>ID</th><th>Status</th><th>Parent ref.</th><th>Pastor ref.</th><th>Submitted</th><th>Last update</th></tr></thead>
+  <tbody>
+  <% rows.forEach(function (r) { %>
+    <tr onclick="location.href='/admin/applications/<%= r.id %>'">
+      <td><a href="/admin/applications/<%= r.id %>"><strong><%= r.first_name %> <%= r.last_name %></strong></a><br><small class="muted"><%= r.email %></small></td>
+      <td><%= r.code %></td>
+      <td><span class="status-pill status-<%= r.status %>"><%= STATUSES[r.status] %></span></td>
+      <td><span class="ref-dot ref-<%= r.parent_status || 'none' %>"><%= r.parent_status ? REF_STATUSES[r.parent_status] : '—' %></span></td>
+      <td><span class="ref-dot ref-<%= r.pastor_status || 'none' %>"><%= r.pastor_status ? REF_STATUSES[r.pastor_status] : '—' %></span></td>
+      <td><%= fmt(r.submitted_at) || '—' %></td>
+      <td><%= fmt(r.updated_at, true) %></td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table>
+</div>
+<% } %>
+<%- include('_bottom') %>

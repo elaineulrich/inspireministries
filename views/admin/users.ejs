@@ -1,0 +1,41 @@
+<%- include('_top') %>
+<div class="page-head"><h1>Admin Users</h1></div>
+<% const msgs = { added: ['ok', 'Admin added.'], removed: ['ok', 'Admin removed.'], pw_changed: ['ok', 'Your password was changed.'], pw_error: ['bad', 'Current password was wrong, or the new password is shorter than 8 characters.'] }; %>
+<% if (flash && msgs[flash]) { %><p class="callout callout-<%= msgs[flash][0] %>"><%= msgs[flash][1] %></p><% } %>
+<% if (error) { %><p class="callout callout-bad"><%= error %></p><% } %>
+
+<div class="table-wrap card flush">
+<table class="table">
+  <thead><tr><th>Name</th><th>Email</th><th>Last sign in</th><th></th></tr></thead>
+  <tbody>
+  <% users.forEach(function (u) { %>
+    <tr>
+      <td><strong><%= u.name %></strong><%= u.id === admin.id ? ' (you)' : '' %></td>
+      <td><%= u.email %></td>
+      <td><%= fmt(u.last_login_at, true) || 'Never' %></td>
+      <td class="right"><% if (u.id !== admin.id) { %>
+        <form method="post" action="/admin/users/<%= u.id %>/delete" data-confirm="Remove <%= u.name %> as an admin?"><button class="link-btn danger" type="submit">Remove</button></form>
+      <% } %></td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table>
+</div>
+
+<div class="two-col">
+  <form class="card" method="post" action="/admin/users">
+    <h2>Add an admin</h2>
+    <p class="field-help">Admins can review applications, edit forms and change settings.</p>
+    <div class="field"><label class="field-label" for="u_name">Name</label><input id="u_name" name="name" required></div>
+    <div class="field"><label class="field-label" for="u_email">Email</label><input id="u_email" name="email" type="email" required></div>
+    <div class="field"><label class="field-label" for="u_pw">Temporary password</label><input id="u_pw" name="password" type="text" minlength="8" required autocomplete="new-password"><p class="field-help">At least 8 characters. Share it with them privately — they can change it after signing in.</p></div>
+    <button class="btn" type="submit">Add admin</button>
+  </form>
+  <form class="card" method="post" action="/admin/account/password">
+    <h2>Change my password</h2>
+    <div class="field"><label class="field-label" for="pw_cur">Current password</label><input id="pw_cur" name="current" type="password" required autocomplete="current-password"></div>
+    <div class="field"><label class="field-label" for="pw_new">New password</label><input id="pw_new" name="password" type="password" minlength="8" required autocomplete="new-password"></div>
+    <button class="btn" type="submit">Change password</button>
+  </form>
+</div>
+<%- include('_bottom') %>

@@ -1,0 +1,9 @@
+<%- include('partials/header', { extraCss: '/css/app.css?v=1' }) %>
+<section class="tagline-band tagline-band-slim"><%- include('partials/tagline', { size: 'sm' }) %></section>
+<% if (boot.preview) { %><div class="preview-bar">Admin preview — <a href="/admin/forms/<%= boot.mode %>">back to the form editor</a></div><% } %>
+<section class="app-wrap">
+  <div id="form-app"></div>
+  <noscript><p class="callout">Please turn on JavaScript to fill out this form.</p></noscript>
+</section>
+<script type="application/json" id="boot"><%- JSON.stringify(boot).replace(/</g, '\\u003c') %></script>
+<%- include('partials/footer', { scripts: ['/vendor/signature_pad.umd.min.js', '/js/form-runner.js?v=1'] }) %>

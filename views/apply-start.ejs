@@ -1,0 +1,51 @@
+<%- include('partials/header', { extraCss: '/css/app.css?v=1' }) %>
+<section class="tagline-band tagline-band-slim"><%- include('partials/tagline', { size: 'sm' }) %></section>
+
+<section class="app-wrap">
+  <div class="form-intro">
+    <h1>Student Application Form</h1>
+    <p class="intro-text">Please complete all sections of this application. February 28 is the sign-up deadline. For student signup questions, please contact <%= settings.contact_name %> @ <%= settings.contact_phone %>.</p>
+    <p class="intro-text"><strong>Fees:</strong> The fee for the 2026 10-Day Bible School is: $150 due at signup, $275 due on the day of sign-in. Please send payment to P.O. Box 1568, Hillsboro, TX 76645, in care of Joel Byers.</p>
+  </div>
+
+  <div id="resume-banner" class="callout callout-info" hidden>
+    <strong>Welcome back!</strong> You have an application in progress on this device.
+    <a class="btn" id="resume-link" href="#">Continue my application</a>
+  </div>
+
+  <% if (settings.accepting_applications !== '1') { %>
+    <div class="callout"><%= settings.closed_message %></div>
+  <% } else { %>
+  <div class="start-grid">
+    <form class="card" method="post" action="/apply/start">
+      <h2>Start a new application</h2>
+      <p class="muted">Enter your name and email to begin. Your answers are saved as you go, and we'll email you a link so you can come back and finish any time.</p>
+      <% if (error) { %><p class="callout callout-bad"><%= error %></p><% } %>
+      <div class="fields">
+        <div class="field half"><label class="field-label" for="first_name">First Name <span class="req">*</span></label><input id="first_name" name="first_name" required autocomplete="given-name" value="<%= values.first_name || '' %>"></div>
+        <div class="field half"><label class="field-label" for="last_name">Last Name <span class="req">*</span></label><input id="last_name" name="last_name" required autocomplete="family-name" value="<%= values.last_name || '' %>"></div>
+        <div class="field full"><label class="field-label" for="email">Email Address <span class="req">*</span></label><input id="email" name="email" type="email" required autocomplete="email" value="<%= values.email || '' %>"></div>
+      </div>
+      <button class="btn btn-primary" type="submit">Start My Application</button>
+    </form>
+
+    <form class="card" method="post" action="/apply/resume" id="resume">
+      <h2>Continue a saved application</h2>
+      <p class="muted">Already started? Enter the email you used and we'll send you a link to pick up where you left off.</p>
+      <% if (sent) { %><p class="callout callout-ok">If we have an application for that email, a link is on its way. Please check your inbox (and spam folder).</p><% } %>
+      <div class="fields">
+        <div class="field full"><label class="field-label" for="resume_email">Email Address</label><input id="resume_email" name="email" type="email" required autocomplete="email"></div>
+      </div>
+      <button class="btn btn-ghost" type="submit">Email Me My Link</button>
+    </form>
+  </div>
+  <% } %>
+  <p class="muted center">Prefer paper? <a href="/student-application">Download the printable forms</a>.</p>
+</section>
+<script>
+  try {
+    var t = localStorage.getItem('im_app_token');
+    if (t) { document.getElementById('resume-link').href = '/apply/' + encodeURIComponent(t); document.getElementById('resume-banner').hidden = false; }
+  } catch (e) {}
+</script>
+<%- include('partials/footer') %>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Admin sign in · Inspire Ministries</title>
+<link rel="icon" href="/img/favicon.jpg">
+<link rel="stylesheet" href="/css/fonts.css">
+<link rel="stylesheet" href="/css/site.css?v=1">
+<link rel="stylesheet" href="/css/app.css?v=1">
+<link rel="stylesheet" href="/css/admin.css?v=1">
+</head>
+<body class="admin admin-login">
+  <form class="card login-card" method="post" action="/admin/login">
+    <img src="/img/logo.png" alt="Inspire Ministries Texas" width="150" height="148">
+    <h1>Admin Portal</h1>
+    <% if (error) { %><p class="callout callout-bad"><%= error %></p><% } %>
+    <input type="hidden" name="next" value="<%= next %>">
+    <div class="field"><label class="field-label" for="email">Email</label><input id="email" name="email" type="email" required autocomplete="username" value="<%= email %>"></div>
+    <div class="field"><label class="field-label" for="password">Password</label><input id="password" name="password" type="password" required autocomplete="current-password"></div>
+    <button class="btn btn-primary" type="submit">Sign in</button>
+    <p class="muted"><a href="/">← Back to website</a></p>
+  </form>
+</body>
+</html>

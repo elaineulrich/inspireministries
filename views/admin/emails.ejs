@@ -1,0 +1,25 @@
+<%- include('_top') %>
+<div class="page-head"><h1>Email Log</h1></div>
+<% if (flash === 'test') { %><p class="callout callout-ok">Test email <%= smtp ? 'sent' : 'recorded below (email delivery is not connected yet)' %>.</p><% } %>
+<% if (!smtp) { %><p class="callout callout-bad">Email delivery is not connected, so these emails were <strong>recorded but not delivered</strong>. See Settings → Email sending.</p><% } %>
+<% if (!emails.length) { %>
+  <div class="card empty">No emails yet.</div>
+<% } else { %>
+<div class="table-wrap card flush">
+<table class="table">
+  <thead><tr><th>When</th><th>To</th><th>Subject</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  <% emails.forEach(function (e) { %>
+    <tr>
+      <td><%= fmt(e.created_at, true) %></td>
+      <td><%= e.to_address %></td>
+      <td><a href="/admin/emails/<%= e.id %>" target="_blank"><%= e.subject %></a></td>
+      <td><span class="status-pill <%= e.status === 'sent' ? 'status-accepted' : e.status === 'failed' ? 'status-declined' : '' %>"><%= e.status === 'logged' ? 'Not delivered' : e.status %></span><%= e.error ? ' ' + e.error : '' %></td>
+      <td><% if (e.application_id) { %><a href="/admin/applications/<%= e.application_id %>">Application</a><% } %></td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table>
+</div>
+<% } %>
+<%- include('_bottom') %>
