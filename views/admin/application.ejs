@@ -1,0 +1,128 @@
+<%- include('_top') %>
+<p class="crumbs"><a href="/admin">← All applications</a></p>
+<div class="page-head">
+  <div>
+    <h1><%= app.first_name %> <%= app.last_name %></h1>
+    <p class="muted">Student ID <strong><%= app.code %></strong> · <a href="mailto:<%= app.email %>"><%= app.email %></a> · Started <%= fmt(app.created_at) %><%= app.submitted_at ? ' · Submitted ' + fmt(app.submitted_at, true) : '' %></p>
+  </div>
+  <div class="actions">
+    <span class="status-pill big status-<%= app.status %>"><%= STATUSES[app.status] %></span>
+    <a class="btn btn-ghost" href="/admin/applications/<%= app.id %>/print" target="_blank">Print / Save PDF</a>
+  </div>
+</div>
+
+<% const flashes = { status: 'Status updated.', reopened: 'The application is re-opened. The student can edit and re-submit it using their link.', sent: 'Reference request emailed.', bad_email: 'Please enter a valid email address.', ref_reopened: 'Reference re-opened. The parent/pastor can use their link to make changes and re-sign.' }; %>
+<% if (flash && flashes[flash]) { %><p class="callout <%= flash === 'bad_email' ? 'callout-bad' : 'callout-ok' %>"><%= flashes[flash] %></p><% } %>
+
+<div class="detail-grid">
+  <div class="detail-main">
+    <nav class="tabs" role="tablist">
+      <button class="tab on" type="button" data-tab="student" role="tab">Student Application</button>
+      <% refs.forEach(function (r) { %>
+        <button class="tab" type="button" data-tab="<%= r.kind %>" role="tab"><%= r.label %> <span class="ref-dot ref-<%= r.ref ? r.ref.status : 'none' %>"></span></button>
+      <% }) %>
+    </nav>
+    <section class="card tab-panel" data-panel="student">
+      <% if (app.status === 'draft') { %><p class="callout">The student has not submitted yet — these are their saved answers so far.</p><% } %>
+      <%- include('_answers', { schema, data: app.data }) %>
+    </section>
+    <% refs.forEach(function (r) { %>
+      <section class="card tab-panel" data-panel="<%= r.kind %>" hidden>
+        <% if (!r.ref) { %>
+          <p class="muted">This reference has not been requested yet. It is created when the student submits their application.</p>
+        <% } else { %>
+          <p class="muted">
+            <% if (r.ref.status === 'completed') { %>Completed <%= fmt(r.ref.completed_at, true) %><%= r.ref.completed_method === 'in_person' ? ' (in person on the student’s device)' : ' (online)' %><%= r.ref.name ? ' by ' + r.ref.name : '' %>.
+            <% } else { %>Status: <%= REF_STATUSES[r.ref.status] %>. <%= r.ref.status === 'in_progress' ? 'Saved answers so far are shown below.' : '' %><% } %>
+          </p>
+          <% if (r.ref.status !== 'pending' && r.ref.status !== 'sent') { %><%- include('_answers', { schema: r.schema, data: r.ref.data }) %><% } %>
+        <% } %>
+      </section>
+    <% }) %>
+  </div>
+
+  <aside class="detail-side">
+    <div class="card">
+      <h2>Status</h2>
+      <form method="post" action="/admin/applications/<%= app.id %>/status" class="stack">
+        <select name="status" aria-label="Application status">
+          <% Object.keys(STATUSES).filter(function (k) { return k !== 'draft'; }).forEach(function (k) { %>
+            <option value="<%= k %>" <%= app.status === k ? 'selected' : '' %>><%= STATUSES[k] %></option>
+          <% }) %>
+        </select>
+        <button class="btn" type="submit">Update status</button>
+      </form>
+      <% if (app.status !== 'draft') { %>
+      <form method="post" action="/admin/applications/<%= app.id %>/reopen" data-confirm="Re-open this application so the student can edit and re-sign it?">
+        <button class="link-btn" type="submit">Re-open for student edits</button>
+      </form>
+      <% } %>
+    </div>
+
+    <div class="card">
+      <h2>References</h2>
+      <% refs.forEach(function (r) { %>
+        <div class="ref-admin">
+          <h3><%= r.label %> <span class="status-pill"><%= r.ref ? REF_STATUSES[r.ref.status] : 'Not created' %></span></h3>
+          <% if (r.ref) { %>
+            <p class="muted small"><%= r.ref.email || 'No email on file' %><%= r.ref.sent_at ? ' · emailed ' + r.ref.send_count + '× (last ' + fmt(r.ref.sent_at) + ')' : '' %></p>
+            <% if (r.ref.status !== 'completed') { %>
+              <form method="post" action="/admin/applications/<%= app.id %>/references/<%= r.kind %>/send" class="inline-form">
+                <input type="email" name="email" value="<%= r.ref.email || '' %>" required aria-label="<%= r.label %> email">
+                <button class="btn btn-ghost" type="submit"><%= r.ref.sent_at ? 'Resend' : 'Send' %></button>
+              </form>
+              <details class="small"><summary>Copy the reference link</summary><input class="copy" readonly value="<%= baseUrl %>/reference/<%= r.ref.token %>" onfocus="this.select()"></details>
+            <% } else { %>
+              <form method="post" action="/admin/applications/<%= app.id %>/references/<%= r.kind %>/reopen" data-confirm="Re-open this reference so it can be changed and re-signed?">
+                <button class="link-btn" type="submit">Re-open for changes</button>
+              </form>
+            <% } %>
+          <% } else if (app.status !== 'draft') { %>
+            <form method="post" action="/admin/applications/<%= app.id %>/references/<%= r.kind %>/send" class="inline-form">
+              <input type="email" name="email" required placeholder="Email address" aria-label="<%= r.label %> email">
+              <button class="btn btn-ghost" type="submit">Send</button>
+            </form>
+          <% } %>
+        </div>
+      <% }) %>
+      <p class="muted small">Student link (status page): <input class="copy" readonly value="<%= baseUrl %>/apply/<%= app.token %>" onfocus="this.select()"></p>
+    </div>
+
+    <div class="card" id="notes">
+      <h2>Board notes</h2>
+      <form method="post" action="/admin/applications/<%= app.id %>/notes" class="stack">
+        <textarea name="body" rows="3" placeholder="Add a private note for the board…" aria-label="Note"></textarea>
+        <button class="btn" type="submit">Add note</button>
+      </form>
+      <% notes.forEach(function (n) { %>
+        <div class="note-item"><p><%= n.body %></p><small class="muted"><%= n.admin_name %> · <%= fmt(n.created_at, true) %></small></div>
+      <% }) %>
+    </div>
+
+    <div class="card">
+      <h2>Activity</h2>
+      <ul class="activity">
+        <% activity.forEach(function (a) { %><li><strong><%= a.actor %></strong> — <%= a.message %><br><small class="muted"><%= fmt(a.created_at, true) %></small></li><% }) %>
+      </ul>
+      <% if (emails.length) { %>
+        <h3 class="small-head">Emails</h3>
+        <ul class="activity">
+          <% emails.forEach(function (e) { %><li><a href="/admin/emails/<%= e.id %>" target="_blank"><%= e.subject %></a><br><small class="muted">to <%= e.to_address %> · <%= e.status %> · <%= fmt(e.created_at, true) %></small></li><% }) %>
+        </ul>
+      <% } %>
+    </div>
+
+    <form method="post" action="/admin/applications/<%= app.id %>/delete" data-confirm="Permanently delete this application and its references? This cannot be undone.">
+      <button class="link-btn danger" type="submit">Delete application</button>
+    </form>
+  </aside>
+</div>
+<script>
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () {
+      document.querySelectorAll('.tab').forEach(function (x) { x.classList.toggle('on', x === t); });
+      document.querySelectorAll('.tab-panel').forEach(function (p) { p.hidden = p.getAttribute('data-panel') !== t.getAttribute('data-tab'); });
+    });
+  });
+</script>
+<%- include('_bottom') %>

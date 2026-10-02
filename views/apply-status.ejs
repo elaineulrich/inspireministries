@@ -1,0 +1,83 @@
+<%- include('partials/header', { extraCss: '/css/app.css?v=1' }) %>
+<section class="tagline-band tagline-band-slim"><%- include('partials/tagline', { size: 'sm' }) %></section>
+<%
+  const refInfo = { parent: { title: 'Parent Reference', who: 'parent or guardian' }, pastor: { title: 'Pastor Reference', who: 'pastor or church leader' } };
+  const done = refs.filter((r) => r.status === 'completed').length;
+%>
+<section class="app-wrap">
+  <% if (flash === 'submitted') { %>
+    <div class="callout callout-ok big"><strong>Thank you, <%= app.first_name %>! Your application has been signed and submitted.</strong><br>
+    Next, your parent and pastor need to complete and sign their references. They can do it right now on this device, or by email.</div>
+  <% } else if (flash && flash.startsWith('sent_')) { %>
+    <div class="callout callout-ok">The <%= flash === 'sent_parent' ? 'parent' : 'pastor' %> reference request has been emailed.</div>
+  <% } else if (flash === 'bad_email') { %>
+    <div class="callout callout-bad">Please enter a valid email address.</div>
+  <% } %>
+
+  <div class="form-intro">
+    <div class="form-intro-top">
+      <h1>My Application</h1>
+      <span class="badge">Student ID <%= app.code %></span>
+    </div>
+    <p class="intro-text"><strong><%= app.first_name %> <%= app.last_name %></strong> · Status: <span class="status-pill status-<%= app.status %>"><%= STATUSES[app.status] %></span></p>
+  </div>
+
+  <ol class="tracker">
+    <li class="done"><span class="num">✓</span><div><strong>Student application</strong><small>Signed and submitted <%= fmt(app.submitted_at) %></small></div></li>
+    <% refs.forEach(function (r) { %>
+      <li class="<%= r.status === 'completed' ? 'done' : 'todo' %>"><span class="num"><%= r.status === 'completed' ? '✓' : '…' %></span><div><strong><%= refInfo[r.kind].title %></strong><small><%= r.status === 'completed' ? 'Completed and signed ' + fmt(r.completed_at) : REF_STATUSES[r.status] %></small></div></li>
+    <% }) %>
+    <li class="<%= ['ready_for_review','under_review','accepted','waitlisted','declined'].includes(app.status) ? 'done' : 'todo' %>"><span class="num">4</span><div><strong>Board review</strong><small>A board member will follow up with you</small></div></li>
+  </ol>
+
+  <% if (done < refs.length) { %>
+  <h2 class="block-title">Complete your references</h2>
+  <div class="ref-grid">
+    <% refs.forEach(function (r) { %>
+      <div class="card ref-card">
+        <h3><%= refInfo[r.kind].title %></h3>
+        <% if (r.status === 'completed') { %>
+          <p class="ok-text">✓ Completed and signed <%= fmt(r.completed_at) %><%= r.name ? ' by ' + r.name : '' %>.</p>
+        <% } else { %>
+          <p class="muted">Status: <strong><%= REF_STATUSES[r.status] %></strong><%= r.sent_at ? ' · last emailed ' + fmt(r.sent_at) + (r.email ? ' to ' + r.email : '') : '' %></p>
+          <div class="ref-option">
+            <h4>Option 1 — In person, on this device</h4>
+            <p class="muted">Hand your phone to your <%= refInfo[r.kind].who %> so they can fill out and sign their part right now.</p>
+            <a class="btn btn-primary in-person" href="/apply/<%= app.token %>/references/<%= r.kind %>/in-person">Fill out <%= r.kind === 'parent' ? 'Parent' : 'Pastor' %> Reference Now</a>
+          </div>
+          <form class="ref-option" method="post" action="/apply/<%= app.token %>/references/<%= r.kind %>/send">
+            <h4>Option 2 — Send by email</h4>
+            <p class="muted">We'll email them a secure link to fill it out and sign on their own device.</p>
+            <div class="inline-form">
+              <input type="email" name="email" required value="<%= r.email || '' %>" aria-label="<%= refInfo[r.kind].title %> email address" placeholder="Email address">
+              <button class="btn btn-ghost" type="submit"><%= r.sent_at ? 'Resend' : 'Send' %></button>
+            </div>
+          </form>
+        <% } %>
+      </div>
+    <% }) %>
+  </div>
+  <% } else { %>
+    <div class="callout callout-ok">All references are complete. A member of the Inspire Ministries board will follow up with you regarding the status of your application.</div>
+  <% } %>
+
+  <details class="card answers">
+    <summary>View my submitted answers</summary>
+    <% schema.sections.forEach(function (s) { %>
+      <h3><%= s.title %></h3>
+      <dl class="answer-list">
+        <% s.fields.filter((fd) => fd.type !== 'content').forEach(function (fd) { %>
+          <div><dt><%= fd.label %></dt><dd><% if (fd.type === 'signature' && app.data[fd.id]) { %><img class="sig-thumb" src="<%= app.data[fd.id].image %>" alt="Signature"><br><% } %><%= forms.displayValue(fd, app.data) || '—' %></dd></div>
+        <% }) %>
+      </dl>
+    <% }) %>
+  </details>
+  <p class="muted center">Questions? Contact <%= settings.contact_name %> at <a href="mailto:<%= settings.contact_email %>"><%= settings.contact_email %></a> or <%= settings.contact_phone %>.</p>
+</section>
+<script>
+  try { localStorage.setItem('im_app_token', <%- JSON.stringify(app.token) %>); } catch (e) {}
+  document.querySelectorAll('.in-person').forEach(function (a) {
+    a.addEventListener('click', function () { try { sessionStorage.setItem('im_return', location.pathname); } catch (e) {} });
+  });
+</script>
+<%- include('partials/footer') %>

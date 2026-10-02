@@ -1,0 +1,10 @@
+</main>
+<footer class="site-footer">
+  <p>Copyright &copy; <%= year %> Inspire Ministries | Site Designed by <strong><a href="https://fusiondesignz.com" target="_blank" rel="noopener">Fusion Designz</a></strong></p>
+</footer>
+<a href="#" class="scroll-top" aria-label="Scroll to Top"><svg viewBox="0 0 26 16" width="15" height="15" aria-hidden="true"><path d="M13 0 26 13l-3 3-10-10L3 16l-3-3z" fill="currentColor"/></svg></a>
+<script src="/js/site.js?v=1"></script>
+<% if (typeof scripts !== 'undefined') { scripts.forEach(function (s) { %><script src="<%= s %>"></script>
+<% }) } %>
+</body>
+</html>

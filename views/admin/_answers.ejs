@@ -1,0 +1,12 @@
+<% schema.sections.forEach(function (s) { %>
+  <h3 class="ans-section"><%= s.title %></h3>
+  <dl class="answer-list">
+    <% s.fields.filter(function (fd) { return fd.type !== 'content'; }).forEach(function (fd) {
+         const v = data[fd.id]; const shown = forms.displayValue(fd, data); %>
+      <div>
+        <dt><%= fd.label %></dt>
+        <dd><% if (fd.type === 'signature' && v && v.image) { %><img class="sig-thumb" src="<%= v.image %>" alt="Signature of <%= v.name %>"><br><small class="muted">Signed by <strong><%= v.name %></strong><%= v.signedAt ? ' · ' + fmt(v.signedAt, true) : '' %><%= v.ip ? ' · IP ' + v.ip : '' %></small><% } else { %><%= shown || '—' %><% } %></dd>
+      </div>
+    <% }) %>
+  </dl>
+<% }) %>

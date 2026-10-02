@@ -1,0 +1,10 @@
+</main>
+<% if (typeof scripts !== 'undefined') { scripts.forEach(function (s) { %><script src="<%= s %>"></script>
+<% }) } %>
+<script>
+  document.querySelectorAll('form[data-confirm]').forEach(function (f) {
+    f.addEventListener('submit', function (e) { if (!confirm(f.getAttribute('data-confirm'))) e.preventDefault(); });
+  });
+</script>
+</body>
+</html>

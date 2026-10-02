@@ -1,0 +1,17 @@
+<%- include('_top') %>
+<div class="page-head"><h1>Forms</h1></div>
+<p class="muted">Edit the questions on the student application and on the parent and pastor reference forms. Changes apply to new and in-progress applications. Applications that are already submitted keep the exact form they were signed against.</p>
+<div class="form-cards">
+  <% list.forEach(function (f) { const count = f.sections.reduce(function (n, s) { return n + s.fields.length; }, 0); %>
+    <div class="card">
+      <p class="eyebrow-sm"><%= KIND_LABELS[f.kind] %></p>
+      <h2><%= f.title %></h2>
+      <p class="muted"><%= f.sections.length %> sections · <%= count %> fields<br>Last updated <%= fmt(f.updated_at, true) %><%= f.updated_by && f.updated_by !== 'system' ? ' by ' + f.updated_by : '' %></p>
+      <div class="actions">
+        <a class="btn" href="/admin/forms/<%= f.kind %>">Edit form</a>
+        <a class="btn btn-ghost" href="/admin/forms/<%= f.kind %>/preview" target="_blank">Preview</a>
+      </div>
+    </div>
+  <% }) %>
+</div>
+<%- include('_bottom') %>

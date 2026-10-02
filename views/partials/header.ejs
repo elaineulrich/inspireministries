@@ -1,0 +1,20 @@
+<%- include('head') %>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/" aria-label="Inspire Ministries home"><img src="/img/logo-header.jpg" alt="Inspire Ministries Texas — Refresh, Inspire, Strengthen, Equip" width="125" height="121"></a>
+    <button class="menu-toggle" type="button" aria-label="Main menu" aria-expanded="false" aria-controls="site-nav">
+      <svg class="icon-open" viewBox="0 0 20 13.3" width="20" height="20" aria-hidden="true"><rect y="0" width="20" height="1.5"/><rect y="5.8" width="20" height="1.5"/><rect y="11.7" width="20" height="1.5"/></svg>
+      <svg class="icon-close" viewBox="0 0 14 14" width="18" height="18" aria-hidden="true"><path d="M13.6 1.8 12.2.4 7 5.6 1.8.4.4 1.8 5.6 7 .4 12.2l1.4 1.4L7 8.4l5.2 5.2 1.4-1.4L8.4 7z"/></svg>
+    </button>
+    <nav id="site-nav" class="site-nav" aria-label="Site Navigation">
+      <ul>
+        <li><a href="/" class="<%= path === '/' ? 'active' : '' %>">Home</a></li>
+        <li><a href="/2026-bible-school" class="<%= path.startsWith('/2026-bible-school') ? 'active' : '' %>">2026 Bible School Event</a></li>
+        <li><a href="/survey">Survey</a></li>
+        <li><a href="/contact-us" class="<%= path.startsWith('/contact-us') ? 'active' : '' %>">Contact Us</a></li>
+      </ul>
+      <a class="btn-pill" href="/student-application">Apply as a Student</a>
+    </nav>
+  </div>
+</header>
+<main id="content">

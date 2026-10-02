@@ -1,0 +1,17 @@
+<%- include('partials/header', { extraCss: '/css/app.css?v=1' }) %>
+<section class="tagline-band tagline-band-slim"><%- include('partials/tagline', { size: 'sm' }) %></section>
+<section class="page-message">
+  <div class="big-check" aria-hidden="true">✓</div>
+  <h1>Thank you!</h1>
+  <p>The <%= ref.kind === 'parent' ? 'parental' : 'pastoral' %> reference for <strong><%= studentName %></strong> has been signed and submitted to the Inspire Ministries board.</p>
+  <% if (inPerson) { %>
+    <p>Please hand the device back to <%= studentName.split(' ')[0] %>.</p>
+    <p style="margin-top:28px"><a class="btn" id="back-link" href="/">Back to Application</a></p>
+    <script>
+      try { var r = sessionStorage.getItem('im_return') || (localStorage.getItem('im_app_token') && '/apply/' + localStorage.getItem('im_app_token')); if (r) document.getElementById('back-link').href = r; } catch (e) {}
+    </script>
+  <% } else { %>
+    <p>You may now close this page. God bless!</p>
+  <% } %>
+</section>
+<%- include('partials/footer') %>

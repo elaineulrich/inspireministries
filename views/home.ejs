@@ -1,0 +1,35 @@
+<%- include('partials/header') %>
+
+<section class="hero-strip">
+  <div class="hero-img" style="background-image:url('/img/texas-sunset.jpg')"></div>
+  <div class="hero-logo"><img src="/img/logo.png" alt="Inspire Ministries Texas — Refresh, Inspire, Strengthen, Equip" width="300" height="297"></div>
+  <div class="hero-img hero-img-bottom" style="background-image:url('/img/bible-dock.jpg')"></div>
+</section>
+
+<section class="tagline-band tagline-band-home">
+  <%- include('partials/tagline', { size: 'lg' }) %>
+  <a class="btn" href="/student-application">Submit an Application</a>
+</section>
+
+<section class="vision">
+  <div class="vision-inner">
+    <div class="vision-text">
+      <h2 class="eyebrow">Our Vision</h2>
+      <p>Motivated by our devotion to God’s love, we are committed to following in the footsteps of Jesus.</p>
+      <h2 class="eyebrow">Our Mission</h2>
+      <p>Guided by the Holy Spirit and inspired scriptures, our mission is to offer teaching, guidance, and nurturing support.</p>
+      <h2 class="eyebrow">Our Purpose</h2>
+      <p>We aim to refresh, inspire, strengthen, and encourage those who have experienced trials and hardships to become fully equipped for service in the kingdom of God.</p>
+    </div>
+    <div class="vision-img" style="background-image:url('/img/praying-hands.jpg')" role="img" aria-label="Hands joined in prayer over an open Bible"></div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Apply for our upcoming Bible School event.<br>Tuesday, March 17 – Friday, March 27, 2026.</h2>
+  <a class="btn" href="/2026-bible-school">View More About Event</a>
+</section>
+
+<%- include('partials/quote', { variant: 'top', image: '/img/hands-sunset.jpg', text: 'Joshua 1:9: "Have I not commanded you? Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go."' }) %>
+
+<%- include('partials/footer') %>

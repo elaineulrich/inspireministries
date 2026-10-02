@@ -1,0 +1,16 @@
+<%- include('_top') %>
+<p class="crumbs"><a href="/admin/forms">← All forms</a></p>
+<div class="page-head">
+  <h1><%= title %></h1>
+  <div class="actions">
+    <a class="btn btn-ghost" href="/admin/forms/<%= kind %>/preview" target="_blank">Preview</a>
+    <form method="post" action="/admin/forms/<%= kind %>/reset" data-confirm="Replace this form with the original default questions? Your edits will be lost.">
+      <button class="btn btn-ghost" type="submit">Reset to default</button>
+    </form>
+  </div>
+</div>
+<% if (flash === 'reset') { %><p class="callout callout-ok">The form was reset to the default questions.</p><% } %>
+<p class="muted">Changes are not live until you click <strong>Save changes</strong>. Submitted applications keep the version of the form they were signed against.</p>
+<div id="builder"></div>
+<script type="application/json" id="boot"><%- JSON.stringify(boot).replace(/</g, '\\u003c') %></script>
+<%- include('_bottom', { scripts: ['/js/form-builder.js?v=1'] }) %>
