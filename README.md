@@ -25,7 +25,7 @@ The Inspire Ministries Texas website ([inspireministries.net](https://inspiremin
 
 ## Running it
 
-Requires Node.js 20 or newer.
+Requires Node.js 22 (it uses the SQLite database built into Node, so there are no native add-ons to compile).
 
 ```bash
 npm install

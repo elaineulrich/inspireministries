@@ -1,13 +1,26 @@
 const path = require('path');
 const fs = require('fs');
-const Database = require('better-sqlite3');
+const { DatabaseSync } = require('node:sqlite');
 
 const dataDir = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
 fs.mkdirSync(dataDir, { recursive: true });
 
-const db = new Database(process.env.DATABASE_FILE || path.join(dataDir, 'inspire.db'));
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+// Node's built-in SQLite (no native add-on to compile, so it runs the same on any host).
+const db = new DatabaseSync(process.env.DATABASE_FILE || path.join(dataDir, 'inspire.db'));
+db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;');
+
+// Runs fn inside a single transaction.
+db.transaction = (fn) => () => {
+  db.exec('BEGIN');
+  try {
+    const result = fn();
+    db.exec('COMMIT');
+    return result;
+  } catch (e) {
+    db.exec('ROLLBACK');
+    throw e;
+  }
+};
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS settings (
