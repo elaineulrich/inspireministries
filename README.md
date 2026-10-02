@@ -39,11 +39,14 @@ On the first start, an admin account is created from `ADMIN_EMAIL` / `ADMIN_PASS
 
 ### Email
 
-Until `SMTP_HOST` is set, emails are **recorded in the Email Log but not delivered**, which is useful for testing. To send for real with the ministry Gmail account:
-1. Turn on 2-Step Verification on the Google account, then create an **App Password**.
-2. Set `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, `SMTP_SECURE=true`, `SMTP_USER` to the Gmail address, and `SMTP_PASS` to the app password.
-3. Set `BASE_URL` to the live site address so links in emails work.
-4. Use **Settings → Send test email** to confirm.
+Email is sent through [Resend](https://resend.com). Until `RESEND_API_KEY` is set, emails are **recorded in the Email Log but not delivered**, which is useful for testing. To turn it on:
+1. In Resend, add and verify the `inspireministries.net` domain (it gives you DNS records to add where the domain is managed).
+2. Create an API key.
+3. Set `RESEND_API_KEY` to the key and `MAIL_FROM` to an address on the verified domain, e.g. `no-reply@inspireministries.net`. Replies go to the "Reply-to" address in Admin → Settings (inspireministries24@gmail.com by default).
+4. Set `BASE_URL` to the live site address so links in emails work.
+5. Use **Settings → Send test email** to confirm.
+
+(SMTP via `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` also works if you ever need it instead.)
 
 ### Hosting
 
@@ -57,7 +60,7 @@ src/db.js               SQLite schema
 src/forms-default.js    default student / parent / pastor forms (from the original JotForm + PDFs)
 src/forms.js            form schema cleaning, validation, display
 src/applications.js     application + reference workflow and notification emails
-src/mail.js             email sending + email template
+src/mail.js             email sending (Resend or SMTP) + email template
 src/routes/             public pages, application flow, admin portal
 views/                  EJS templates (site, application, admin)
 public/                 CSS, JS (form runner, form builder), images, fonts, PDFs

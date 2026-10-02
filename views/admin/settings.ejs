@@ -42,7 +42,7 @@
     <% if (smtp) { %>
       <p class="callout callout-ok">Email delivery is connected.</p>
     <% } else { %>
-      <p class="callout callout-bad"><strong>Email delivery is not connected yet.</strong> Emails are recorded in the Email Log but not delivered. Set the <code>SMTP_HOST</code>, <code>SMTP_PORT</code>, <code>SMTP_USER</code> and <code>SMTP_PASS</code> environment variables on the server (see README) to start sending.</p>
+      <p class="callout callout-bad"><strong>Email delivery is not connected yet.</strong> Emails are recorded in the Email Log but not delivered. Set the <code>RESEND_API_KEY</code> and <code>MAIL_FROM</code> environment variables on the server (see README) to start sending.</p>
     <% } %>
     <p class="field-help">Links in emails point to <strong><%= baseUrl %></strong> (set with the <code>BASE_URL</code> environment variable).</p>
   </div>

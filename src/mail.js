@@ -2,14 +2,33 @@ const nodemailer = require('nodemailer');
 const { db } = require('./db');
 const { getSettings } = require('./settings');
 
-let transport = null;
-if (process.env.SMTP_HOST) {
-  transport = nodemailer.createTransport({
+// Email is sent through Resend (RESEND_API_KEY) when configured, otherwise SMTP (SMTP_HOST).
+// With neither, emails are only recorded in the Email Log.
+let smtp = null;
+if (!process.env.RESEND_API_KEY && process.env.SMTP_HOST) {
+  smtp = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT || 587),
     secure: process.env.SMTP_SECURE === 'true' || Number(process.env.SMTP_PORT) === 465,
     auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined,
   });
+}
+const isConfigured = () => !!(process.env.RESEND_API_KEY || smtp);
+
+async function deliver({ from, replyTo, to, subject, html }) {
+  if (process.env.RESEND_API_KEY) {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from, to: [to], subject, html, ...(replyTo ? { reply_to: replyTo } : {}) }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(`Resend ${res.status}: ${body.message || res.statusText}`);
+    }
+    return;
+  }
+  await smtp.sendMail({ from, replyTo: replyTo || undefined, to, subject, html });
 }
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -51,9 +70,9 @@ async function sendMail({ to, subject, applicationId = null, ...content }) {
   for (const addr of recipients) {
     let status = 'logged';
     let error = null;
-    if (transport) {
+    if (isConfigured()) {
       try {
-        await transport.sendMail({ from: `"${s.email_from_name}" <${from}>`, replyTo: s.reply_to || undefined, to: addr, subject, html });
+        await deliver({ from: `${s.email_from_name} <${from}>`, replyTo: s.reply_to, to: addr, subject, html });
         status = 'sent';
       } catch (e) {
         status = 'failed';
@@ -61,11 +80,11 @@ async function sendMail({ to, subject, applicationId = null, ...content }) {
         console.error(`[mail] failed to send to ${addr}: ${e.message}`);
       }
     } else {
-      console.log(`[mail] SMTP not configured — logged email to ${addr}: ${subject}`);
+      console.log(`[mail] email not configured — logged email to ${addr}: ${subject}`);
     }
     db.prepare('INSERT INTO emails (application_id, to_address, subject, html, status, error) VALUES (?, ?, ?, ?, ?, ?)')
       .run(applicationId, addr, subject, html, status, error);
   }
 }
 
-module.exports = { sendMail, baseUrl, esc, isConfigured: () => !!transport };
+module.exports = { sendMail, baseUrl, esc, isConfigured };
